@@ -23,6 +23,8 @@ Start Floci and let the initialization script create the example AWS resources:
 docker compose up -d
 ```
 
+The Compose setup also starts **floci-ui**. Open [http://localhost:4500](http://localhost:4500) to interact with the local AWS resources through its web UI. The UI connects to the Floci service started by the same Compose file.
+
 Then start the Spring Boot application:
 
 ```bash
