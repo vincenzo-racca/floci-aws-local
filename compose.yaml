@@ -15,3 +15,16 @@ services:
 #      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "./config/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
       - "/var/run/docker.sock:/var/run/docker.sock"
+  floci-ui:
+    container_name: "floci-ui"
+    image: floci/floci-ui:0.6.0
+    ports:
+      - "127.0.0.1:4500:4500"
+    environment:
+      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - FLOCI_ENDPOINT=http://aws-local:4566
+    depends_on:
+      - aws-local
