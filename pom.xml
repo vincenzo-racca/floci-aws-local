@@ -87,12 +87,13 @@
 			<version>${testcontainers-floci.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.awspring.cloud</groupId>
-			<artifactId>spring-cloud-aws-testcontainers</artifactId>
-			<version>4.1.0</version>
-			<scope>test</scope>
-		</dependency>
+<!--		If you don't want use manual credentials for testing -->
+<!--		<dependency>-->
+<!--			<groupId>io.awspring.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-aws-testcontainers</artifactId>-->
+<!--			<version>4.1.0</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
 	</dependencies>
 
 	<build>
