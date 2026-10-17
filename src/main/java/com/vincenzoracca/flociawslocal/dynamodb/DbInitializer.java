@@ -3,6 +3,7 @@ package com.vincenzoracca.flociawslocal.dynamodb;
 import io.awspring.cloud.dynamodb.DynamoDbTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import software.amazon.awssdk.enhanced.dynamodb.Key;
 import java.util.UUID;
 
 @Component
+@ConditionalOnBooleanProperty(prefix = "floci-aws-local", name = "enable-db-initializer")
 public class DbInitializer {
 
     private final Logger log = LoggerFactory.getLogger(DbInitializer.class);
