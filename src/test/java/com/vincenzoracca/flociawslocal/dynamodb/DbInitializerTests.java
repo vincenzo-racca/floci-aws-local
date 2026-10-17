@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest;
 
@@ -14,7 +13,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "floci-aws-local.enable-db-initializer=true",
+        "floci-aws-local.enable-outbox-v0=false",
+        "floci-aws-local.enable-outbox-v1=false",
+        "floci-aws-local.enable-outbox-v2=false"
+})
 @Import(FlociConfiguration.class)
 class DbInitializerTests {
 
