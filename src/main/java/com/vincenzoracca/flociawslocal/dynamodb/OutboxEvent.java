@@ -18,7 +18,7 @@ import java.time.Instant;
 @Builder
 public class OutboxEvent {
 
-    public static final String AGGREGATION_TYPE = "Order";
+    public static final String ORDER_AGGREGATION_TYPE = "Order";
     public static final long NEXT_ATTEMPT_DELAY_SECOND = 60; // 1 minute
 
     private String eventId;
@@ -53,23 +53,4 @@ public class OutboxEvent {
         return nextAttemptAt;
     }
 
-    public static class OutboxKeys {
-
-        public static final int SHARD_COUNT = 4; // da configurazione
-
-        private OutboxKeys() {}
-
-        public static String aggregationTypeStatus(String aggregateType,
-                                                   OutboxEvent.OutboxEventStatus status,
-                                                   String eventId) {
-            int shard = Math.floorMod(eventId.hashCode(), SHARD_COUNT);
-            return aggregateType + "#" + status + "#" + shard;
-        }
-
-        public static String aggregationTypeStatus(String aggregateType,
-                                                   OutboxEvent.OutboxEventStatus status,
-                                                   int shard) {
-            return aggregateType + "#" + status + "#" + shard;
-        }
-    }
 }

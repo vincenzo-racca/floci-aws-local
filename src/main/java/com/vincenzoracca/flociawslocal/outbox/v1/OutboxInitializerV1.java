@@ -24,11 +24,11 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static com.vincenzoracca.flociawslocal.dynamodb.Order.OrderStatus.PENDING;
-import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.AGGREGATION_TYPE;
+import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.ORDER_AGGREGATION_TYPE;
 import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.NEXT_ATTEMPT_DELAY_SECOND;
 import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.OutboxEventStatus.*;
-import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.OutboxKeys.SHARD_COUNT;
-import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.OutboxKeys.aggregationTypeStatus;
+import static com.vincenzoracca.flociawslocal.dynamodb.OutboxKeys.SHARD_COUNT;
+import static com.vincenzoracca.flociawslocal.dynamodb.OutboxKeys.aggregationTypeStatus;
 import static software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional.sortLessThanOrEqualTo;
 
 @Component
@@ -54,7 +54,7 @@ public class OutboxInitializerV1 {
 
     @EventListener(ApplicationReadyEvent.class)
     public void initialize() {
-        Order order =Order.builder()
+        Order order = Order.builder()
                 .orderId(UUID.randomUUID().toString())
                 .bookIsbn("1234567890")
                 .price(BigDecimal.valueOf(19.99))
@@ -71,7 +71,7 @@ public class OutboxInitializerV1 {
                 .status(READY)
                 .createdAt(Instant.now())
                 .nextAttemptAt(Instant.now().getEpochSecond())
-                .aggregationTypeStatus(aggregationTypeStatus(AGGREGATION_TYPE,
+                .aggregationTypeStatus(aggregationTypeStatus(ORDER_AGGREGATION_TYPE,
                         READY, eventId))
                 .build();
 
@@ -93,7 +93,7 @@ public class OutboxInitializerV1 {
     }
 
     private void processPage(DynamoDbIndex<OutboxEvent> index, int shard) {
-        String pk = aggregationTypeStatus(AGGREGATION_TYPE, READY, shard);
+        String pk = aggregationTypeStatus(ORDER_AGGREGATION_TYPE, READY, shard);
         long now = Instant.now().getEpochSecond();
 
         QueryEnhancedRequest request = QueryEnhancedRequest.builder()
@@ -118,15 +118,23 @@ public class OutboxInitializerV1 {
             sqsTemplate.send("from-order-to-payment-queue", paymentEvent);
 
             outboxEvent.setStatus(SENT);
-            outboxEvent.setAggregationTypeStatus(aggregationTypeStatus(AGGREGATION_TYPE, SENT, outboxEvent.getEventId()));
+            outboxEvent.setAggregationTypeStatus(aggregationTypeStatus(
+                            ORDER_AGGREGATION_TYPE,
+                            SENT,
+                            outboxEvent.getEventId()));
             outboxEvent.setTtl(Instant.now().getEpochSecond() + 3600 * 24); // Set TTL to 1 day from now
         } catch (RuntimeException e) {
             log.warn("Failed to process outbox event {}", outboxEvent.getEventId(), e);
             outboxEvent.setAttempts(outboxEvent.getAttempts() + 1);
-            outboxEvent.setNextAttemptAt(Instant.now().plusSeconds(NEXT_ATTEMPT_DELAY_SECOND).getEpochSecond());
+            outboxEvent.setNextAttemptAt(Instant.now()
+                    .plusSeconds(NEXT_ATTEMPT_DELAY_SECOND)
+                    .getEpochSecond());
             if (outboxEvent.getAttempts() >= 3) {
                 outboxEvent.setStatus(DEAD);
-                outboxEvent.setAggregationTypeStatus(aggregationTypeStatus(AGGREGATION_TYPE, DEAD, 0));
+                outboxEvent.setAggregationTypeStatus(aggregationTypeStatus(
+                        ORDER_AGGREGATION_TYPE,
+                        DEAD,
+                        0));
                 log.error("Outbox event {} has failed 3 times and is marked as DEAD", outboxEvent.getEventId());
             }
         }

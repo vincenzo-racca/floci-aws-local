@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.OutboxEventStatus.*;
-import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.OutboxKeys.SHARD_COUNT;
-import static com.vincenzoracca.flociawslocal.dynamodb.OutboxEvent.OutboxKeys.aggregationTypeStatus;
+import static com.vincenzoracca.flociawslocal.dynamodb.OutboxKeys.SHARD_COUNT;
+import static com.vincenzoracca.flociawslocal.dynamodb.OutboxKeys.aggregationTypeStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;

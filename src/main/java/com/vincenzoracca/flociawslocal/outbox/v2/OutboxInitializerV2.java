@@ -17,6 +17,8 @@ import software.amazon.awssdk.enhanced.dynamodb.model.PutItemEnhancedRequest;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import static com.vincenzoracca.flociawslocal.dynamodb.Order.OrderStatus.PENDING;
+
 @Component
 @ConditionalOnBooleanProperty(prefix = "floci-aws-local", name = "enable-outbox-v2")
 public class OutboxInitializerV2 {
@@ -31,11 +33,12 @@ public class OutboxInitializerV2 {
 
     @EventListener(ApplicationReadyEvent.class)
     public void initialize() {
-        Order order = new Order();
-        order.setOrderId(UUID.randomUUID().toString());
-        order.setBookIsbn("1234567890");
-        order.setPrice(BigDecimal.valueOf(19.99));
-        order.setStatus(Order.OrderStatus.PENDING);
+        Order order = Order.builder()
+                .orderId(UUID.randomUUID().toString())
+                .bookIsbn("1234567890")
+                .price(BigDecimal.valueOf(19.99))
+                .status(PENDING)
+                .build();
 
         PutItemEnhancedRequest<Order> request = PutItemEnhancedRequest.builder(Order.class)
                 .item(order)
