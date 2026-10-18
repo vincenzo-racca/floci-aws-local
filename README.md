@@ -9,6 +9,13 @@ The examples use Spring Cloud AWS with:
 - **DynamoDB Streams and EventBridge Pipes:** forward `INSERT` records from the `order` table to the payment queue, transforming each record into the format expected by `PaymentEvent`.
 - **AWS Systems Manager Parameter Store:** create `/config/floci-aws-local/env-value`, import it into Spring configuration, and log its value.
 
+## Articles about this repository
+
+**I've written two articles about this repository on my blog:**
+
+- [Transactional Outbox](https://www.vincenzoracca.com/blog/framework/spring/outbox/)
+- [Floci](https://www.vincenzoracca.com/blog/framework/spring/floci/)
+
 ## Requirements
 
 - Java 25
